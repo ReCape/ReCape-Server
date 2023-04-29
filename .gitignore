@@ -1,12 +1,17 @@
 auth_codes/*
+!auth_codes/README
 
-ssl/*
+*.pem
 
 static/capes/*
 !static/capes/none.png
+!static/capes/README
 
 static/models/*
+!static/models/README
 
 *.db
+
+eula.txt
 
 todo.txt

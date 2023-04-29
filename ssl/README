@@ -1,0 +1,4 @@
+Here's where you put your SSL certificates.
+Put your private key (sometimes ends in .key) here and name it "private.key.pem".
+Put your domain certificate here (sometimes ends in .crt) and name it "domain.cert.pem".
+ReCape uses Porkbun to manage domains, and this is the default Porkbun format.
