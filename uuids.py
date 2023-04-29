@@ -5,7 +5,7 @@ class UUIDs:
         self.con = sqlite3.connect("uuid.db", check_same_thread=False)
         self.cur = self.con.cursor()
 
-        self.cur.execute("CREATE TABLE IF NOT EXISTS tokens (uuid varchar(255), username varchar(255))")
+        self.cur.execute("CREATE TABLE IF NOT EXISTS uuids (uuid varchar(255), username varchar(255))")
 
     def register(self, uuid, username):
         self.cur.execute("DELETE FROM uuids WHERE uuid = ?", (uuid,))
