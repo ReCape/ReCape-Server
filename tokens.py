@@ -7,6 +7,8 @@ class Tokens:
         self.con = sqlite3.connect("tokens.db", check_same_thread=False)
         self.cur = self.con.cursor()
 
+        self.cur.execute("CREATE TABLE IF NOT EXISTS tokens (token varchar(255), uuid varchar(255), source varchar(255))")
+
     def generate_token(self):
         return uuid4().hex
 
