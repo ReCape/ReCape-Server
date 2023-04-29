@@ -1,0 +1,12 @@
+auth_codes/*
+
+ssl/*
+
+static/capes/*
+!static/capes/none.png
+
+static/models/*
+
+*.db
+
+todo.txt
