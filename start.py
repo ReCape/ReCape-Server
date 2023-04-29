@@ -3,8 +3,6 @@ import subprocess
 import threading
 import api
 
-os.chdir("server")
-
 def mc_server():
     subprocess.call("java -jar server.jar", shell=True)
 
