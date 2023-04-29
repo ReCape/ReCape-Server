@@ -13,6 +13,9 @@ class Server:
     app = flask.Flask(__name__)
 
     CLOAKS_PLUS_URL = "https://server.cloaksplus.com"
+
+    PORT = 443 # Change to 80 for HTTP
+
     def __init__(self):
         self.tokens = tokens.Tokens()
         self.uuids = uuids.UUIDs()
@@ -278,4 +281,4 @@ class Server:
         return flask.send_from_directory("static/models/" + uuid + "/" + model, "texture.png")
     
     def start(self):
-        self.app.run("0.0.0.0", 80, ssl_context=("ssl/domain.cert.pem", "ssl/private.key.pem"))
+        self.app.run("0.0.0.0", self.PORT, ssl_context=("ssl/domain.cert.pem", "ssl/private.key.pem"))
