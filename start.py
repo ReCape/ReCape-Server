@@ -15,11 +15,11 @@ def optifine_serve():
 
 server_thread = threading.Thread(target=mc_server)
 optifine_thread = threading.Thread(target=optifine_serve)
-#server_thread.start()
+server_thread.start()
 optifine_thread.start()
 
 server = api.Server()
 server.start()
 
-#server_thread.join()
+server_thread.join()
 optifine_thread.join()
