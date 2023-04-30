@@ -41,6 +41,7 @@ class Server:
             uuid = self.uuids.get_uuid(username).replace("-", "")
         except:
             return ""
+        print(uuid)
         file = flask.send_from_directory("static/capes", uuid + ".png")
         if file.status_code == 404:
             file = flask.redirect(self.CLOAKS_PLUS_URL + "/capes/" + username + ".png", code=200)
