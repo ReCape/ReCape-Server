@@ -14,7 +14,7 @@ class Server:
 
     CLOAKS_PLUS_URL = "https://server.cloaksplus.com"
 
-    PORT = 443 # Change to 80 for HTTP
+    PORT = 80 # Change to 80 for HTTP
 
     def __init__(self):
         self.tokens = tokens.Tokens()
@@ -186,6 +186,10 @@ class Server:
             return {"status": "failure", "error": "The supplied token and UUID are not valid. Did you log in? Try restarting your client."}
 
         try:
+            if not os.path.exists("static/models/" + uuid):
+                os.mkdir("static/models/" + uuid)
+                with open("static/models/" + uuid + "/config.json", "w+") as config:
+                    config.write("{}")
             models = os.listdir("static/models/" + uuid)
             models.remove("config.json")
             return {"status": "success", "models": models}
@@ -281,4 +285,4 @@ class Server:
         return flask.send_from_directory("static/models/" + uuid + "/" + model, "texture.png")
     
     def start(self):
-        self.app.run("0.0.0.0", self.PORT, ssl_context=("ssl/domain.cert.pem", "ssl/private.key.pem"))
+        self.app.run("0.0.0.0", self.PORT)#, ssl_context=("ssl/domain.cert.pem", "ssl/private.key.pem"))

@@ -14,7 +14,7 @@ class Tokens:
 
     def hash(self, text, salt_level=12):
         salt = bcrypt.gensalt(salt_level)
-        return bcrypt.hashpw(text, salt)
+        return bcrypt.hashpw(text.encode("utf-8"), salt)
 
     def register_token(self, token, uuid, source, autohash=True):
         if autohash:
@@ -28,7 +28,7 @@ class Tokens:
         
         for match in matching:
             try:
-                if bcrypt.checkpw(token, match[0]):
+                if bcrypt.checkpw(token.encode("utf-8"), match[0]):
                     return True
             except ValueError:
                 pass
