@@ -14,7 +14,7 @@ class Server:
 
     CLOAKS_PLUS_URL = "https://server.cloaksplus.com"
 
-    PORT = 80 # Change to 80 for HTTP
+    PORT = 443
 
     def __init__(self):
         self.tokens = tokens.Tokens()
@@ -27,9 +27,6 @@ class Server:
         def authenticate_microsoft(): return self.authenticate_microsoft()
         @self.app.route("/authenticate/check_token")
         def check_token(): return self.check_token()
-
-        @self.app.route("/capes/<username>")
-        def serve_cape(username): return self.serve_cape(username)
 
         @self.app.route('/account/set_cape', methods=['POST'])
         def set_cape(): return self.set_cape()
@@ -44,16 +41,6 @@ class Server:
         def set_config(): return self.set_config()
         @self.app.route("/account/get_cosmetic_list")
         def get_cosmetic_list(): return self.get_cosmetic_list()
-
-        @self.app.route("/users/<username>.cfg")
-        def serve_user_config(username): return self.serve_user_config(username)
-
-        @self.app.route("/items/<uuid>/<model>/model.cfg")
-        def serve_item_model(uuid, model): return self.serve_item_model(uuid, model)
-        @self.app.route("/items/<uuid>/<model>/texture.png")
-        def serve_item_texture(uuid, model): return self.serve_item_texture(uuid, model, None)
-        @self.app.route("/items/<uuid>/<model>/users/<user>")
-        def serve_item_texture_with_user(uuid, model, user): return self.serve_item_texture(uuid, model, user)
     
     def create_auth(self, uuid, username, source="Unknown"):
         token = self.tokens.generate_token()
@@ -245,44 +232,5 @@ class Server:
 
         return {"status": "success"}
     
-    def serve_cape(self, username):
-        username = username.replace(".png", "")
-        try:
-            uuid = self.uuids.get_uuid(username).replace("-", "")
-        except:
-            return ""
-        file = flask.send_from_directory("static/capes", uuid + ".png")
-        if file.status_code == 404:
-            file = flask.redirect(self.CLOAKS_PLUS_URL + "/capes/" + username + ".png", code=200)
-        return file
-
-    def serve_user_config(self, config):
-        print(config)
-        uuid = self.uuids.get_uuid(config)
-        if not uuid:
-            return ""
-        uuid = uuid.replace("-", "")
-        with open("static/models/" + uuid + "/config.json", "r+") as file:
-            config = json.loads(file.read())
-        if config == "":
-            config = {}
-        
-        optifine_formatted_cfg = {"items": []}
-
-        for item in config.keys():
-            optifine_formatted_cfg["items"].append({
-                "type": item,
-                "model": "items/" + uuid + "/" + item + "/model.cfg",
-                "texture": "items/" + uuid + "/" + item + "/texture.png",
-                "active": config[item]
-            })
-
-        return optifine_formatted_cfg
-    
-    def serve_item_model(self, uuid, model):
-        return flask.send_from_directory("static/models/" + uuid + "/" + model, "model.cfg")
-    def serve_item_texture(self, uuid, model, user):
-        return flask.send_from_directory("static/models/" + uuid + "/" + model, "texture.png")
-    
     def start(self):
-        self.app.run("0.0.0.0", self.PORT)#, ssl_context=("ssl/domain.cert.pem", "ssl/private.key.pem"))
+        self.app.run("0.0.0.0", self.PORT, ssl_context=("ssl/domain.cert.pem", "ssl/private.key.pem")) # We need to run the API over HTTPS because I don't want to make end-to-end encryption from scratch :)
