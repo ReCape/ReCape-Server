@@ -16,7 +16,8 @@ class Server:
 
     PORT = 80
 
-    def __init__(self):
+    def __init__(self, debug):
+        self.DEBUG = debug
         self.tokens = tokens.Tokens()
         self.uuids = uuids.UUIDs()
         self.api = API()
@@ -76,4 +77,10 @@ class Server:
         return flask.send_from_directory("static/models/" + uuid + "/" + model, "texture.png")
     
     def start(self):
-        self.app.run("0.0.0.0", self.PORT) # We need to run the OF server over HTTP since we can't use OptiFine's SSL certificates (duh) and OptiFine can use HTTP anyway
+        # We need to run the OF server over HTTP since we can't use OptiFine's SSL certificates (duh) and OptiFine can use HTTP anyway
+
+        if self.DEBUG:
+            self.app.run("0.0.0.0", self.PORT)
+        else:
+            from waitress import serve
+            serve(self.app, host="0.0.0.0", port=self.PORT)

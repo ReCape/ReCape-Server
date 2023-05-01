@@ -16,7 +16,8 @@ class Server:
 
     PORT = 443
 
-    def __init__(self):
+    def __init__(self, debug):
+        self.DEBUG = debug
         self.tokens = tokens.Tokens()
         self.uuids = uuids.UUIDs()
         self.api = API()
@@ -233,4 +234,9 @@ class Server:
         return {"status": "success"}
     
     def start(self):
-        self.app.run("0.0.0.0", self.PORT, ssl_context=("ssl/domain.cert.pem", "ssl/private.key.pem")) # We need to run the API over HTTPS because I don't want to make end-to-end encryption from scratch :)
+        # We need to run the API over HTTPS because I don't want to make end-to-end encryption from scratch :)
+
+        if self.DEBUG:
+            self.app.run("0.0.0.0", self.PORT, ssl_context=("ssl/domain.cert.pem", "ssl/private.key.pem"))
+        else:
+            raise Exception("API cannot be run in a non-debug environment. You must run with Gunicorn.")
