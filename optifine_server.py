@@ -41,11 +41,11 @@ class Server:
         try:
             uuid = self.uuids.get_uuid(username).replace("-", "")
         except:
-            return ""
+            return flask.redirect(self.CLOAKS_PLUS_URL + "/capes/" + username + ".png", code=302)
         print(uuid)
         file = flask.send_from_directory("static/capes", uuid + ".png")
         if file.status_code == 404:
-            file = flask.redirect(self.CLOAKS_PLUS_URL + "/capes/" + username + ".png", code=200)
+            file = flask.redirect(self.CLOAKS_PLUS_URL + "/capes/" + username + ".png", code=302)
         return file
 
     def serve_user_config(self, config):

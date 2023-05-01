@@ -14,7 +14,7 @@ def optifine_serve():
 
 server_thread = threading.Thread(target=mc_server)
 optifine_thread = threading.Thread(target=optifine_serve)
-server_thread.start()
+#server_thread.start()
 optifine_thread.start()
 
 if DEBUG:
