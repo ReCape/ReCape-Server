@@ -22,7 +22,7 @@ if DEBUG:
     server = api.Server(DEBUG)
     server.start()
 else:
-    subprocess.run("python3 -m gunicorn --certfile=ssl/domain.cert.pem --keyfile=ssl/private.key.pem --bind 0.0.0.0:443 \"wsgi:create_server()\"")
+    subprocess.run("python3 -m gunicorn --certfile=ssl/domain.cert.pem --keyfile=ssl/private.key.pem --bind 0.0.0.0:443 \"wsgi:create_server()\"", shell=True)
 
 server_thread.join()
 optifine_thread.join()
