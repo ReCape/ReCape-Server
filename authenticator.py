@@ -10,7 +10,7 @@ def verify_by_code(code, uuid):
         print("Doesn't exist *shrug*")
         return False
 
-    result = bcrypt.checkpw(code, hash)
+    result = bcrypt.checkpw(code.encode("utf-8"), hash.encode("utf-8"))
     
     if result:
         os.remove("auth_codes/" + uuid + ".auth")
