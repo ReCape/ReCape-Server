@@ -2,6 +2,7 @@ import json
 import os
 import shutil
 import flask
+import requests
 import werkzeug
 import authenticator
 import tokens
@@ -109,7 +110,9 @@ class Server:
         elif cape_type == "cloaksplus":
             username = self.uuids.get_username(uuid)
             try:
-                file = urllib.request.urlretrieve(self.CLOAKS_PLUS_URL + "/capes/" + username + ".png", "static/capes/" + uuid.replace("-", "") + ".png")
+                r = requests.get(self.CLOAKS_PLUS_URL + "/capes/" + username + ".png") 
+                with open("static/capes/" + uuid.replace("-", "") + ".png", "wb") as file:
+                    file.write(r.content)
                 return {"status": "success"}
             except urllib.error.HTTPError as e:
                 return {"status": "failure", "error": "You don't have a cape on Cloaks+!"}
