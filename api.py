@@ -9,9 +9,11 @@ import tokens
 import uuids
 from mojang import API, errors
 import urllib.request, urllib.error
+from flask_cors import CORS
 
 class Server:
     app = flask.Flask(__name__)
+    CORS(app)
 
     CLOAKS_PLUS_URL = "https://server.cloaksplus.com"
 
