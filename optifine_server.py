@@ -22,6 +22,9 @@ class Server:
         self.uuids = uuids.UUIDs()
         self.api = API()
 
+        @self.app.route("/")
+        def home(): return flask.render_template("index.html")
+
         @self.app.route("/capes/<username>")
         def serve_cape(username): return self.serve_cape(username)
 

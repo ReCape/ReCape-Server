@@ -25,6 +25,9 @@ class Server:
         self.uuids = uuids.UUIDs()
         self.api = API()
 
+        @self.app.route("/")
+        def home(): return flask.render_template("index.html")
+
         @self.app.route("/authenticate/server_code")
         def authenticate_server_code(): return self.authenticate_server_code()
         @self.app.route("/authenticate/ms_login")
@@ -76,7 +79,11 @@ class Server:
         password = flask.request.headers.get("password")
         username = flask.request.headers.get("username")
         source = flask.request.headers.get("source", "Unknown")
-        uuid = self.api.get_uuid(username)
+
+        try:
+            uuid = self.api.get_uuid(username)
+        except errors.NotFound:
+            return {"status": "failure", "error": "Could not get your UUID from Mojang. Did you type your username correctly?"}
 
         if authenticator.verify_by_ms_account(email, password, username):
             return {"status": "success", "token": self.create_auth(uuid, username, source), "uuid": uuid}
