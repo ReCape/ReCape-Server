@@ -7,7 +7,6 @@ def verify_by_code(code, uuid):
         with open("auth_codes/" + uuid + ".auth", "r") as file:
             hash = file.read()
     except:
-        print("Doesn't exist *shrug*")
         return False
 
     result = bcrypt.checkpw(code.encode("utf-8"), hash.encode("utf-8"))

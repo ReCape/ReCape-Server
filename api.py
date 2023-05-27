@@ -113,7 +113,7 @@ class Server:
             try:
                 shutil.copy("static/capes/none.png", "static/capes/" + uuid.replace("-", "") + ".png")
             except Exception as e:
-                print(e)
+                return {"status": "failure", "error": e}
             return {"status": "success"}
         
         elif cape_type == "cloaksplus":
