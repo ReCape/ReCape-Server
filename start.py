@@ -6,7 +6,7 @@ import optifine_server
 DEBUG = os.path.exists(".debug")
 
 def mc_server():
-    subprocess.call("java -jar server.jar", shell=True)
+    subprocess.call("java -jar server.jar --nogui", shell=True)
 
 def optifine_serve():
     server = optifine_server.Server(DEBUG)
