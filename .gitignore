@@ -1,12 +1,28 @@
-world
-world_nether
-world_the_end
+# Minecraft server files
+world/
+world_nether/
+world_the_end/
+logs/
+bundler/
+spigot.yml
+server.properties
+usercache.json
+whitelist.json
+ops.json
+banned-players.json
+banned-ips.json
 
+# You'll need to add your own jar because we're not licensed to distribute Spigot
+server.jar
+
+# Auth code folder is populated during testing
 auth_codes/*
 !auth_codes/README
 
+# Remove all the SSL files
 *.pem
 
+# The capes and model folders are populated during testing
 static/capes/*
 !static/capes/none.png
 !static/capes/README
@@ -14,9 +30,14 @@ static/capes/*
 static/models/*
 !static/models/README
 
+# The databases are populated during testing
 *.db
 
+# The EULA shouldn't be signed by default
 eula.txt
 
+# The todo is private
 todo.txt
+
+# Don't ship with debug by default
 .debug
