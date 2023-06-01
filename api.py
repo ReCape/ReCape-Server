@@ -22,6 +22,8 @@ class Server:
 
     PORT = 443
 
+    MAX_MODELS = 5
+
     def __init__(self, debug):
         self.DEBUG = debug
         self.tokens = tokens.Tokens()
@@ -227,7 +229,6 @@ class Server:
         if not self.tokens.verify(uuid, token):
             return {"status": "failure", "error": "The supplied token and UUID are not valid. Did you log in? Try restarting your client."}
 
-
         if 'model' not in flask.request.files or 'texture' not in flask.request.files:
             return {"status": "failure", "error": "The model and texture files were not detected in the data."}
         
@@ -245,6 +246,9 @@ class Server:
 
         try: os.mkdir(save_dir)
         except FileExistsError: pass
+
+        if len(os.listdir(save_dir)) > self.MAX_MODELS:
+            return {"status": "failure", "error": "You've hit the maximum amount of models (" + str(self.MAX_MODELS) + ")."}
 
         save_dir += "/" + model_name
 
