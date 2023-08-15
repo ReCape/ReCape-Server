@@ -1,0 +1,95 @@
+---- Minecraft Crash Report ----
+// Ouch. That hurt :(
+
+Time: 2023-08-15 17:07:04
+Description: Exception in server tick loop
+
+java.lang.UnsatisfiedLinkError: Can't load library: /usr/lib/jvm/java-17-openjdk-17.0.7.0.7-5.fc38.x86_64/lib/libawt_xawt.so
+	at java.base/java.lang.ClassLoader.loadLibrary(ClassLoader.java:2393)
+	at java.base/java.lang.Runtime.load0(Runtime.java:755)
+	at java.base/java.lang.System.load(System.java:1953)
+	at java.base/jdk.internal.loader.NativeLibraries.load(Native Method)
+	at java.base/jdk.internal.loader.NativeLibraries$NativeLibraryImpl.open(NativeLibraries.java:388)
+	at java.base/jdk.internal.loader.NativeLibraries.loadLibrary(NativeLibraries.java:232)
+	at java.base/jdk.internal.loader.NativeLibraries.loadLibrary(NativeLibraries.java:174)
+	at java.base/jdk.internal.loader.NativeLibraries.findFromPaths(NativeLibraries.java:315)
+	at java.base/jdk.internal.loader.NativeLibraries.loadLibrary(NativeLibraries.java:285)
+	at java.base/java.lang.ClassLoader.loadLibrary(ClassLoader.java:2398)
+	at java.base/java.lang.Runtime.loadLibrary0(Runtime.java:818)
+	at java.base/java.lang.System.loadLibrary(System.java:1989)
+	at java.desktop/java.awt.Toolkit$2.run(Toolkit.java:1392)
+	at java.desktop/java.awt.Toolkit$2.run(Toolkit.java:1390)
+	at java.base/java.security.AccessController.doPrivileged(AccessController.java:318)
+	at java.desktop/java.awt.Toolkit.loadLibraries(Toolkit.java:1389)
+	at java.desktop/java.awt.Toolkit.initStatic(Toolkit.java:1427)
+	at java.desktop/java.awt.Toolkit.<clinit>(Toolkit.java:1401)
+	at java.desktop/java.awt.Color.<clinit>(Color.java:277)
+	at org.bukkit.map.MapPalette.c(MapPalette.java:28)
+	at org.bukkit.map.MapPalette.<clinit>(MapPalette.java:44)
+	at org.bukkit.craftbukkit.v1_19_R3.CraftServer.<init>(CraftServer.java:379)
+	at net.minecraft.server.players.PlayerList.<init>(PlayerList.java:168)
+	at net.minecraft.server.dedicated.DedicatedPlayerList.<init>(SourceFile:17)
+	at net.minecraft.server.dedicated.DedicatedServer.e(DedicatedServer.java:183)
+	at net.minecraft.server.MinecraftServer.w(MinecraftServer.java:975)
+	at net.minecraft.server.MinecraftServer.lambda$0(MinecraftServer.java:304)
+	at java.base/java.lang.Thread.run(Thread.java:833)
+
+
+A detailed walkthrough of the error, its code path and all known details is as follows:
+---------------------------------------------------------------------------------------
+
+-- System Details --
+Details:
+	Minecraft Version: 1.19.4
+	Minecraft Version ID: 1.19.4
+	Operating System: Linux (amd64) version 6.4.7-200.fc38.x86_64
+	Java Version: 17.0.7, Red Hat, Inc.
+	Java VM Version: OpenJDK 64-Bit Server VM (mixed mode, sharing), Red Hat, Inc.
+	Memory: 323761056 bytes (308 MiB) / 452984832 bytes (432 MiB) up to 8392802304 bytes (8004 MiB)
+	CPUs: 12
+	Processor Vendor: GenuineIntel
+	Processor Name: Intel(R) Core(TM) i5-10600K CPU @ 4.10GHz
+	Identifier: Intel64 Family 6 Model 165 Stepping 5
+	Microarchitecture: unknown
+	Frequency (GHz): 4.10
+	Number of physical packages: 1
+	Number of physical CPUs: 6
+	Number of logical CPUs: 12
+	Graphics card #0 name: GA104 [GeForce RTX 3060 Ti Lite Hash Rate]
+	Graphics card #0 vendor: NVIDIA Corporation (0x10de)
+	Graphics card #0 VRAM (MB): 288.00
+	Graphics card #0 deviceId: 0x2489
+	Graphics card #0 versionInfo: unknown
+	Memory slot #0 capacity (MB): 16384.00
+	Memory slot #0 clockSpeed (GHz): -0.00
+	Memory slot #0 type: DDR4
+	Memory slot #1 capacity (MB): 16384.00
+	Memory slot #1 clockSpeed (GHz): -0.00
+	Memory slot #1 type: DDR4
+	Virtual memory max (MB): 24192.45
+	Virtual memory used (MB): 5415.63
+	Swap memory total (MB): 8192.00
+	Swap memory used (MB): 0.00
+	JVM Flags: 0 total; 
+	CraftBukkit Information: 
+   Running: CraftBukkit version 3753-Spigot-7d7b241-b346a5f (MC: 1.19.4) (Implementing API version 1.19.4-R0.1-SNAPSHOT) true
+   Plugins: {}
+   Warnings: DEFAULT
+   Reload Count: 
+   Failed to handle CraftCrashReport:
+java.lang.NullPointerException: Cannot read field "reloadCount" because "net.minecraft.server.MinecraftServer.getServer().server" is null
+	at org.bukkit.craftbukkit.v1_19_R3.CraftCrashReport.get(CraftCrashReport.java:31)
+	at org.bukkit.craftbukkit.v1_19_R3.CraftCrashReport.get(CraftCrashReport.java:1)
+	at net.minecraft.SystemReport.a(SourceFile:66)
+	at net.minecraft.CrashReport.<init>(CrashReport.java:37)
+	at net.minecraft.server.MinecraftServer.a(MinecraftServer.java:1091)
+	at net.minecraft.server.MinecraftServer.w(MinecraftServer.java:1035)
+	at net.minecraft.server.MinecraftServer.lambda$0(MinecraftServer.java:304)
+	at java.base/java.lang.Thread.run(Thread.java:833)
+
+	Server Running: true
+	Data Packs: vanilla, file/bukkit
+	Enabled Feature Flags: minecraft:vanilla
+	World Generation: Stable
+	Is Modded: Definitely; Server brand changed to 'Spigot'
+	Type: Dedicated Server (map_server.txt)

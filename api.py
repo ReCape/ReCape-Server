@@ -64,12 +64,23 @@ class Server:
         @limits(calls=15, period=60)
         def get_cosmetic_list(): return self.get_cosmetic_list()
 
+        @self.app.errorhandler(RateLimitException)
+        def rate_limited(error):
+            return {"status", "failure", "error", self.string(["api", "errors", "rate_limit"])}
+        
         @self.app.errorhandler(500)
         def server_error(error):
-            print(error)
-            if isinstance(error, RateLimitException):
-                return {"status", "failure", "error", "You've tried to do that too many times and are being rate limited."}
-            return {"status": "failure", "error": "An internal server error occurred."}
+            return {"status": "failure", "error": self.string(["api", "errors", "500"])}
+        
+        with open("english.json", "r+") as lang:
+            self.strings = json.loads(lang.read())
+    
+    def string(self, path):
+        cur = self.strings
+        for seg in path:
+            cur = cur[seg]
+        
+        return cur
     
     def create_auth(self, uuid, username, source="Unknown"):
         token = self.tokens.generate_token()
@@ -86,14 +97,14 @@ class Server:
         try:
             uuid = self.api.get_uuid(username)
         except errors.NotFound:
-            return {"status": "failure", "error": "The given Minecraft username doesn't exist. Did you type it correctly?"}
+            return {"status": "failure", "error": self.string(["api", "errors", "invalid_username"])}
         except Exception as e:
             return {"status": "failure", "error": str(e)}
 
         if authenticator.verify_by_code(code, uuid):
             return {"status": "success", "token": self.create_auth(uuid, username, source), "uuid": uuid}
         else:
-            return {"status": "failure", "error": "Could not authenticate. Did you connect to the authentication server with your Minecraft account and type the code in?"}
+            return {"status": "failure", "error": self.string(["api", "errors", "invalid_auth_code"])}
 
     def authenticate_microsoft(self):
 
@@ -105,12 +116,12 @@ class Server:
         try:
             uuid = self.api.get_uuid(username)
         except errors.NotFound:
-            return {"status": "failure", "error": "Could not get your UUID from Mojang. Did you type your username correctly?"}
+            return {"status": "failure", "error": self.string(["api", "errors", "invalid_username"])}
 
         if authenticator.verify_by_ms_account(email, password, username):
             return {"status": "success", "token": self.create_auth(uuid, username, source), "uuid": uuid}
         else:
-            return {"status": "failure", "error": "Could not authenticate. Did you type in the correct email and password for your Microsoft account?"}
+            return {"status": "failure", "error": self.string(["api", "errors", "invalid_ms_credentials"])}
     
     def check_token(self):
         token = flask.request.headers.get("token")
@@ -129,7 +140,7 @@ class Server:
         cape_type = flask.request.headers.get("cape_type", "")
 
         if not self.tokens.verify(uuid, token):
-            return {"status": "failure", "error": "The supplied token and UUID are not valid. Did you log in? Try restarting your client."}
+            return {"status": "failure", "error": self.string(["api", "errors", "invalid_token"])}
         
         if cape_type == "none":
             try:
@@ -141,23 +152,23 @@ class Server:
         elif cape_type == "cloaksplus":
             username = self.uuids.get_username(uuid)
             if username == False:
-                return {"status": "failure", "error": "The username was not found. Try logging in again."}
+                return {"status": "failure", "error": self.string(["api", "errors", "invalid_username"])}
             try:
                 r = requests.get(self.CLOAKS_PLUS_URL + "/capes/" + username + ".png") 
                 with open("static/capes/" + uuid.replace("-", "") + ".png", "wb") as file:
                     file.write(r.content)
                 return {"status": "success"}
             except urllib.error.HTTPError as e:
-                return {"status": "failure", "error": "You don't have a cape on Cloaks+!"}
+                return {"status": "failure", "error": self.string(["api", "errors", "invalid_cloaksplus_username"])}
 
 
         if 'file' not in flask.request.files:
-            return {"status": "failure", "error": "No file was detected in the data."}
+            return {"status": "failure", "error": self.string(["api", "errors", "no_file"])}
         file = flask.request.files['file']
         # If the user does not select a file, the browser submits an
         # empty file without a filename.
         if file.filename == '' or file.filename == None:
-            return {"status": "failure", "error": "The files appears to be empty, or has an empty filename."}
+            return {"status": "failure", "error": self.string(["api", "errors", "empty_file"])}
         if file and file.filename.endswith(".png"):
             filename = uuid.replace("-", "") + ".png"
             file.save(os.path.join("static/capes/", filename))
@@ -169,10 +180,11 @@ class Server:
 
 
         if not self.tokens.verify(uuid, token):
-            return {"status": "failure", "error": "The supplied token and UUID are not valid. Did you log in? Try restarting your client."}
+            return {"status": "failure", "error": self.string(["api", "errors", "invalid_token"])}
 
         try:
-
+            if not os.path.exists("static/models/" + uuid):
+                os.mkdir("static/models/" + uuid)
             if not os.path.exists("static/models/" + uuid + "/config.json"):
                 with open("static/models/" + uuid + "/config.json", "w+") as file:
                     file.write(json.dumps({}))
@@ -189,7 +201,7 @@ class Server:
         data = json.loads(flask.request.headers.get("config", "{}"))
 
         if not self.tokens.verify(uuid, token):
-            return {"status": "failure", "error": "The supplied token and UUID are not valid. Did you log in? Try restarting your client."}
+            return {"status": "failure", "error": self.string(["api", "errors", "invalid_token"])}
 
         try:
  
@@ -207,7 +219,7 @@ class Server:
 
 
         if not self.tokens.verify(uuid, token):
-            return {"status": "failure", "error": "The supplied token and UUID are not valid. Did you log in? Try restarting your client."}
+            return {"status": "failure", "error": self.string(["api", "errors", "invalid_token"])}
 
         try:
             if not os.path.exists("static/models/" + uuid):
@@ -227,17 +239,17 @@ class Server:
 
 
         if not self.tokens.verify(uuid, token):
-            return {"status": "failure", "error": "The supplied token and UUID are not valid. Did you log in? Try restarting your client."}
+            return {"status": "failure", "error": self.string(["api", "errors", "invalid_token"])}
 
         if 'model' not in flask.request.files or 'texture' not in flask.request.files:
-            return {"status": "failure", "error": "The model and texture files were not detected in the data."}
+            return {"status": "failure", "error": self.string(["api", "errors", "no_model_files"])}
         
         model = flask.request.files['model']
         texture = flask.request.files['texture']
 
 
         if model.filename == '' or model.filename == None:
-            return {"status": "failure", "error": "The files appears to be empty, or has an empty filename."}
+            return {"status": "failure", "error": self.string(["api", "errors", "empty_model_files"])}
         
         model_name = flask.request.headers.get("model_name", default="".join(model.filename.split(".")[:-1]))
 
@@ -248,7 +260,7 @@ class Server:
         except FileExistsError: pass
 
         if len(os.listdir(save_dir)) > self.MAX_MODELS:
-            return {"status": "failure", "error": "You've hit the maximum amount of models (" + str(self.MAX_MODELS) + ")."}
+            return {"status": "failure", "error": self.string(["api", "errors", "max_models"])}
 
         save_dir += "/" + model_name
 
@@ -277,17 +289,17 @@ class Server:
         model = flask.request.headers.get("model", "")
 
         if not self.tokens.verify(uuid, token):
-            return {"status": "failure", "error": "The supplied token and UUID are not valid. Did you log in? Try restarting your client."}
+            return {"status": "failure", "error": self.string(["api", "errors", "invalid_token"])}
 
 
         if model == "":
-            return {"status": "failure", "error": "The model was not specified."}
+            return {"status": "failure", "error": self.string(["api", "errors", "model_not_specified"])}
 
 
         save_dir = "static/models/" + uuid.replace("-", "")
 
         if not os.path.exists(save_dir) or not os.path.exists(save_dir + "/" + model):
-            return {"status": "failure", "error": "The model was not found"}
+            return {"status": "failure", "error": self.string(["api", "errors", "invalid_model"])}
 
         try:
             shutil.rmtree(save_dir + "/" + model)
@@ -304,7 +316,7 @@ class Server:
 
         except Exception as e:
             print(e)
-            return {"status": "failure", "error": "An unknown error occurred whilst attempting to delete the model"}
+            return {"status": "failure", "error": self.string(["api", "errors", "unknown", "deletion"])}
 
         return {"status": "success"}
     

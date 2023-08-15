@@ -1,0 +1,24 @@
+{
+    "api": {
+        "errors": {
+            "rate_limit": "You've done that too many times and are being rate limited.",
+            "500": "An internal server error has occurred.",
+            "invalid_username": "The given Minecraft username doesn't exist. Did you type it correctly?",
+            "invalid_auth_code": "Could not authenticate. Did you connect to the authentication server with your Minecraft account and type the code in?",
+            "invalid_ms_credentials": "Could not authenticate. Did you type in the correct email and password for your Microsoft account?",
+            "invalid_token": "You can't do that because your token and/or UUID is invalid. Try restarting your client and logging in again.",
+            "invalid_cloaksplus_username": "You don't have a cape on Cloaks+!",
+            "no_file": "No file was detected in the data.",
+            "no_model_files": "The model and/or texture files were not detected in the data.",
+            "empty_file": "The file seems to be either empty or has an empty file name.",
+            "empty_model_files": "The files seem to be either empty or have empty filenames",
+            "max_models": "You've uploaded the maximum number of models.",
+            "model_not_specified": "The model was not specified.",
+            "invalid_model": "The model was not found.",
+
+            "unknown": {
+                "deletion": "An unknown error occurred whilst deleting the file."
+            }
+        }
+    }
+}
