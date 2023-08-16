@@ -42,7 +42,7 @@ class Server:
     def serve_cape(self, username):
         username = username.replace(".png", "")
         try:
-            uuid = self.uuids.get_uuid(username).replace("-", "")
+            uuid = self.uuids.get_uuid(username).replace("-", "") # type: ignore
         except:
             return flask.redirect(self.CLOAKS_PLUS_URL + "/capes/" + username + ".png", code=302)
         file = flask.send_from_directory("static/capes", uuid + ".png")

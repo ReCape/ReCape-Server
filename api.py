@@ -48,6 +48,10 @@ class Server:
         @limits(calls=3, period=60)
         def set_cape(): return self.set_cape()
 
+        @self.app.route('/account/get_cape')
+        @limits(calls=15, period=60)
+        def get_cape(): return self.get_cape()
+
         @self.app.route('/account/upload_cosmetic', methods=['POST'])
         @limits(calls=3, period=60)
         def upload_cosmetic(): return self.upload_cosmetic()
@@ -173,6 +177,16 @@ class Server:
             filename = uuid.replace("-", "") + ".png"
             file.save(os.path.join("static/capes/", filename))
             return {"status": "success"}
+    
+    def get_cape(self):
+        token = flask.request.headers.get("token", "")
+        uuid = flask.request.headers.get("uuid", "")
+
+        file = flask.send_from_directory("static/capes", uuid + ".png")
+        if file.status_code == 404:
+            username = str(self.api.get_username(uuid))
+            file = flask.redirect(self.CLOAKS_PLUS_URL + "/capes/" + username + ".png", code=302)
+        return file
     
     def get_config(self):
         token = flask.request.headers.get("token", "")
