@@ -68,6 +68,14 @@ class Server:
         @limits(calls=15, period=60)
         def get_cosmetic_list(): return self.get_cosmetic_list()
 
+        @self.app.route('/account/get_cosmetic_cfg')
+        @limits(calls=15, period=60)
+        def get_cosmetic_cfg(): return self.get_cosmetic_cfg()
+
+        @self.app.route('/account/get_cosmetic_texture')
+        @limits(calls=15, period=60)
+        def get_cosmetic_texture(): return self.get_cosmetic_texture()
+
         @self.app.errorhandler(RateLimitException)
         def rate_limited(error):
             return {"status", "failure", "error", self.string(["api", "errors", "rate_limit"])}
@@ -179,13 +187,26 @@ class Server:
             return {"status": "success"}
     
     def get_cape(self):
-        token = flask.request.headers.get("token", "")
         uuid = flask.request.headers.get("uuid", "")
 
         file = flask.send_from_directory("static/capes", uuid + ".png")
         if file.status_code == 404:
             username = str(self.api.get_username(uuid))
             file = flask.redirect(self.CLOAKS_PLUS_URL + "/capes/" + username + ".png", code=302)
+        return file
+    
+    def get_cosmetic_cfg(self):
+        uuid = flask.request.headers.get("uuid", "")
+        model = flask.request.headers.get("model", "")
+
+        file = flask.send_from_directory("static/models/" + uuid + "/" + model, "model.cfg")
+        return file
+    
+    def get_cosmetic_texture(self):
+        uuid = flask.request.headers.get("uuid", "")
+        model = flask.request.headers.get("model", "")
+
+        file = flask.send_from_directory("static/models/" + uuid + "/" + model, "texture.png")
         return file
     
     def get_config(self):
