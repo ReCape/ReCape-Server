@@ -8,6 +8,10 @@ import tokens
 import uuids
 from mojang import API, errors
 import urllib.request, urllib.error
+import time
+import psutil
+
+start_time = time.time()
 
 class Server:
     app = flask.Flask(__name__)
@@ -23,7 +27,7 @@ class Server:
         self.api = API()
 
         @self.app.route("/")
-        def home(): return flask.render_template("index.html")
+        def home(): return flask.render_template("index.html", users=self.uuids.get_user_count(), uptime=int( ( time.time()-psutil.boot_time() ) / 60 / 60 ), uptime_program=int( ( time.time()-start_time ) / 60 / 60 ))
 
         @self.app.route("/capes/<username>")
         def serve_cape(username): return self.serve_cape(username)

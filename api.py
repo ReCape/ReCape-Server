@@ -12,6 +12,11 @@ import urllib.request, urllib.error
 from flask_cors import CORS
 from ratelimit import limits
 from ratelimit.exception import RateLimitException
+import news
+import psutil
+import time
+
+start_time = time.time()
 
 class Server:
     app = flask.Flask(__name__)
@@ -31,7 +36,7 @@ class Server:
         self.api = API()
 
         @self.app.route("/")
-        def home(): return flask.render_template("index.html")
+        def home(): return flask.render_template("index.html", users=self.uuids.get_user_count(), uptime=int( ( time.time()-psutil.boot_time() ) / 60 / 60 ), uptime_program=int( ( time.time()-start_time ) / 60 / 60 ))
 
         @self.app.route("/authenticate/server_code")
         @limits(calls=5, period=120)
@@ -75,6 +80,14 @@ class Server:
         @self.app.route('/account/get_cosmetic_texture')
         @limits(calls=15, period=60)
         def get_cosmetic_texture(): return self.get_cosmetic_texture()
+
+        @self.app.route("/news/get")
+        @limits(calls=15, period=60)
+        def get_news(): return self.get_news()
+
+        @self.app.route("/news/get_image")
+        @limits(calls=15, period=60)
+        def get_news_image(): return self.get_news_image()
 
         @self.app.errorhandler(RateLimitException)
         def rate_limited(error):
@@ -207,6 +220,17 @@ class Server:
         model = flask.request.headers.get("model", "")
 
         file = flask.send_from_directory("static/models/" + uuid + "/" + model, "texture.png")
+        return file
+    
+    def get_news(self):
+        count = int(flask.request.headers.get("count", "0"))
+
+        return {"status": "success", "articles": news.get_news_articles(count)}
+    
+    def get_news_image(self):
+        title = flask.request.headers.get("title", "")
+
+        file = flask.send_from_directory("news/" + title, "image.png")
         return file
     
     def get_config(self):

@@ -32,5 +32,9 @@ class UUIDs:
             return matching[0][0]
         return False
     
+    def get_user_count(self):
+        self.cur.execute("SELECT * FROM uuids")
+        return len(self.cur.fetchall())
+    
     def finish(self):
         self.con.close()
