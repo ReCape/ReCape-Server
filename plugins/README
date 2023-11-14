@@ -1,0 +1,1 @@
+The only Jar file in this folder is the ReCape code generation plugin. This generates random authentication codes that are returned to the Minecraft client in plaintext and stored with a hash in the auth_codes folder.

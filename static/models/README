@@ -1,0 +1,7 @@
+3D models that are attached to the player are stored here. The format is:
+models (this folder)
+    /[Short UUID of player]
+        /config.json (contains a list of models and whether they're active)
+        /[Any name for a model]
+            /model.cfg (the model geometry data outputted by Blockbench)
+            /texture.png (the model texture outputted by Blockbench)

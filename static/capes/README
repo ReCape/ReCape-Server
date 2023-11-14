@@ -1,0 +1,2 @@
+This folder contains all player capes. Each cape's file name is just the short UUID + ".png". 
+The none.png is a transparent texture that is returned to OptiFine when the player selects "No cape" in the desktop client.

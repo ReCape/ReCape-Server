@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>ReCape Server</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+        <style>
+            body {
+                background-color: black;
+                color: white;
+                font-family: sans-serif;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                text-align: center;
+                height: 100vh;
+                width: 100vw;
+                padding: 0;
+                margin: 0;
+            }
+
+            h2 {
+                font-weight: normal;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>ReCape Server</h1>
+        <h2>You've successfully connected to the ReCape server. If the URL in your address bar is <i>s.optifine.net</i>, then you've successfully installed ReCape!</i></h2>
+
+        <div class="stats">
+            <h1>Stats</h1>
+            <h2>Total Users</h2>
+            <h1>{{ users }} users</h1>
+            <h2>Server Uptime (how long the server computer has been running)</h2>
+            <h1>{{ uptime }} hours</h1>
+            <h2>Program Uptime (how long the server software has been running)</h2>
+            <h1>{{ uptime }} hours</h1>
+        </div>
+    </body>
+</html>
