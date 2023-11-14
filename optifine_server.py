@@ -27,7 +27,7 @@ class Server:
         self.api = API()
 
         @self.app.route("/")
-        def home(): return flask.render_template("index.html", users=self.uuids.get_user_count(), uptime=int( ( time.time()-psutil.boot_time() ) / 60 / 60 ), uptime_program=int( ( time.time()-start_time ) / 60 / 60 ))
+        def home(): return flask.render_template("index-http.html", users=self.uuids.get_user_count(), uptime=int( ( time.time()-psutil.boot_time() ) / 60 / 60 ), uptime_program=int( ( time.time()-start_time ) / 60 / 60 ))
 
         @self.app.route("/capes/<username>")
         def serve_cape(username): return self.serve_cape(username)
@@ -47,7 +47,8 @@ class Server:
         username = username.replace(".png", "")
         try:
             uuid = self.uuids.get_uuid(username).replace("-", "") # type: ignore
-        except:
+        except Exception as e:
+            print(e)
             return flask.redirect(self.CLOAKS_PLUS_URL + "/capes/" + username + ".png", code=302)
         file = flask.send_from_directory("static/capes", uuid + ".png")
         if file.status_code == 404:

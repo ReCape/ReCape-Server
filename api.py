@@ -1,3 +1,4 @@
+#type: ignore
 import json
 import os
 import shutil
@@ -18,7 +19,7 @@ import time
 
 start_time = time.time()
 
-class Server:
+class Server: 
     app = flask.Flask(__name__)
     app.config['MAX_CONTENT_LENGTH'] = 8 * 1000 * 1000 # The first number is the maximum upload size in megabyte
     CORS(app)
@@ -36,7 +37,7 @@ class Server:
         self.api = API()
 
         @self.app.route("/")
-        def home(): return flask.render_template("index.html", users=self.uuids.get_user_count(), uptime=int( ( time.time()-psutil.boot_time() ) / 60 / 60 ), uptime_program=int( ( time.time()-start_time ) / 60 / 60 ))
+        def home(): return flask.render_template("index-https.html", users=self.uuids.get_user_count(), uptime=int( ( time.time()-psutil.boot_time() ) / 60 / 60 ), uptime_program=int( ( time.time()-start_time ) / 60 / 60 ))
 
         @self.app.route("/authenticate/server_code")
         @limits(calls=5, period=120)
@@ -91,7 +92,7 @@ class Server:
 
         @self.app.errorhandler(RateLimitException)
         def rate_limited(error):
-            return {"status", "failure", "error", self.string(["api", "errors", "rate_limit"])}
+            return {"status": "failure", "error": self.string(["api", "errors", "rate_limit"])}
         
         @self.app.errorhandler(500)
         def server_error(error):
@@ -127,7 +128,7 @@ class Server:
             return {"status": "failure", "error": str(e)}
 
         if authenticator.verify_by_code(code, uuid):
-            return {"status": "success", "token": self.create_auth(uuid, username, source), "uuid": uuid}
+            return {"status": "success", "token": self.create_auth(uuid, username, source), "uuid": uuid, "username": username}
         else:
             return {"status": "failure", "error": self.string(["api", "errors", "invalid_auth_code"])}
 
@@ -144,14 +145,14 @@ class Server:
             return {"status": "failure", "error": self.string(["api", "errors", "invalid_username"])}
 
         if authenticator.verify_by_ms_account(email, password, username):
-            return {"status": "success", "token": self.create_auth(uuid, username, source), "uuid": uuid}
+            return {"status": "success", "token": self.create_auth(uuid, username, source), "uuid": uuid, "username": username}
         else:
             return {"status": "failure", "error": self.string(["api", "errors", "invalid_ms_credentials"])}
     
     def check_token(self):
         token = flask.request.headers.get("token")
         uuid = flask.request.headers.get("uuid")
-        username = flask.request.headers.get("username", "")
+        username = flask.request.headers.get("username")
 
         self.uuids.register(uuid, username)
 
@@ -160,21 +161,21 @@ class Server:
         return {"status": "success", "result": "invalid"}
     
     def set_cape(self):
+        capetype = flask.request.headers.get("capetype")
         token = flask.request.headers.get("token", "")
         uuid = flask.request.headers.get("uuid", "")
-        cape_type = flask.request.headers.get("cape_type", "")
 
         if not self.tokens.verify(uuid, token):
             return {"status": "failure", "error": self.string(["api", "errors", "invalid_token"])}
         
-        if cape_type == "none":
+        if capetype == "none":
             try:
                 shutil.copy("static/capes/none.png", "static/capes/" + uuid.replace("-", "") + ".png")
             except Exception as e:
                 return {"status": "failure", "error": e}
             return {"status": "success"}
         
-        elif cape_type == "cloaksplus":
+        elif capetype == "cloaksplus":
             username = self.uuids.get_username(uuid)
             if username == False:
                 return {"status": "failure", "error": self.string(["api", "errors", "invalid_username"])}

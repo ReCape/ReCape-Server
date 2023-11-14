@@ -1,0 +1,8 @@
+psutil
+flask
+gunicorn
+waitress
+mojang
+java
+flask-cors
+ratelimit
